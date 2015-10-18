@@ -26,3 +26,11 @@
 *.exe
 *.out
 *.app
+
+# visual studio
+*.sdf
+*.user
+/.vs
+/Debug
+UnblockMe/Debug
+/ipch
