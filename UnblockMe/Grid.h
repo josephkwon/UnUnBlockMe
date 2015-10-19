@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include <fstream>
+#include <memory>
+#include <queue>
 #include <string>
 #include <unordered_set>
 #include <vector>
@@ -11,6 +13,7 @@
 typedef unsigned long long uint;
 
 enum CONSTANTS {
+	EMPTY = -1,
 	DEFAULT_WINNING_Y = 2,
 	HEIGHT = 6,
 	WIDTH = 6,
@@ -31,6 +34,13 @@ struct ValidMove {
 	ValidMove(int id, int move);
 };
 
+struct ValidState {
+	std::shared_ptr<std::vector<int>> state;
+	std::vector<ValidMove> path;
+	ValidMove move;
+	ValidState(std::shared_ptr<std::vector<int>> state, int id, int move);
+};
+
 class Grid
 {
 public:
@@ -41,14 +51,20 @@ public:
 	Grid();
 	Grid(std::ostream& o);
 	~Grid();
+	void clearGrid();
 	bool addBlock(int x, int y, bool isHoriz, int len);
 	void addBlocks(const std::string& filename);
+	void recordBlocks(std::vector<int>& coords);
+	void arrangeBlocks(std::vector<int>& coords);
 	uint getHash();
 	uint getHash(const ValidMove& m);
 	void getValidMoves(std::vector<ValidMoves>& moves);
 	void doMove(const ValidMove& move);
 	void undoMove(const ValidMove& move);
 	bool solve(std::vector<ValidMove>& path, std::unordered_set<uint>& done);
+	bool solveDFS(std::vector<ValidMove>& path, std::unordered_set<uint>& done);
+	void addValidMoves(std::queue<ValidState>& q, std::unordered_set<uint>& done, bool notInitial);
+	bool solveBFS(std::vector<ValidMove>& path, std::unordered_set<uint>& done);
 	bool isWin();
 	void printPath(std::vector<ValidMove>& path);
 };
